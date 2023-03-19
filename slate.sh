@@ -237,6 +237,7 @@ sanitize() {
 parse_args "$@"
 
 if [ "${command}" = "serve" ]; then
+  run_build
   run_serve
 elif [[ "${command}" = "build" ]]; then
   run_build
