@@ -1,245 +1,220 @@
 ---
-title: API Reference
+title: Secpass APIs Reference
 
 language_tabs: # must be one of https://github.com/rouge-ruby/rouge/wiki/List-of-supported-languages-and-lexers
   - shell
-  - ruby
-  - python
-  - javascript
-
-toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a>
-
-includes:
-  - errors
 
 search: true
 
 code_clipboard: true
 
 meta:
-  - name: description
-    content: Documentation for the Kittn API
+- name: description
+  content: Document for the Secpass APIs
 ---
 
-# Introduction
+# Welcome to Secpass APIs Document!
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+This APIs document details HTTP request and response for all Secpass APIs.
 
-We have language bindings in Shell, Ruby, Python, and JavaScript! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+## Endpoints
+Secpass API endpoints are in the form of `https://{$instance}/{$provider}/{$endpoint}`. Value of `$instance` will be provisioned
+during application onboarding with Secpass, together with application API key (see the [API Authentication](#api-authentication)
+section)
+## API Authentication
+Secpass API call requires application authentication by API key which will be provisioned during application onboarding. The API 
+key is
+placed in **Authorization** header:  
 
-This example API documentation page was created with [Slate](https://github.com/slatedocs/slate). Feel free to edit it and use it as a base for your own API's documentation.
+`Authorization: Basic ${API_key}`
 
-# Authentication
-
-> To authorize, use this code:
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
+## Secpass token consumption
+### Secpass token
 
 ```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here" \
-  -H "Authorization: meowmeowmeow"
+  # Sample Secpass token
+  eyJlcGsiOnsia3R5IjoiRUMiLCJjcnYiOiJQLTI1NiIsIngiOiJBUnZHNEY4Tl8ydFhnVUUtM3pSWEtfa3hVZFY4QTVyX0FVNUxhR3hhdVVBIiwieSI6IjBwZDF5b1FQVXdNeHFkU2sydDBFT0FxOFpUanZrci1sUFZnb2dvTW9EUVkifSwiZW5jIjoiQTI1NkdDTSIsImFsZyI6IkVDREgtRVMifQ..bQ-uu0olNykhxjRI.IndhhSzUTwx6oswbqN1rIQMVc0SSH-Vy3sMuMgxF8bhyc7mhKSpw2M8_luGq9MCpk9cuML8BiwEq5B2WGOoVQzeFyC4lDpc61jZG01nwxc85zkzgTR_znhWBhaTsGLKHpEbm7woWe1aD9fJea8Fd-Fus-w8K1I2vGnTjT6gnsRdaQwWDlSXXYqpBPI7fv7hE4R5PmVilaKBYS6b65aOR3C_VNGaHBowgv3eR45BLv8KTnhqN94_6j0xZrTMwitnQATjoa7I3baxbGX0yIj7JWKz9kvHe6yPB1CZEFhr-jpktdeJf0XtAQ5Xzdl9-C5tWu0cp5EadMC2QCaCe7uQlmu36DmytOtSgNwUdEqRQfdbiVNnoEcvsFomN-JRy9Byg_mhzVDAYdVsdw867Lyb-j0iKHv_avXWE5uG5S-j4r8FZOH2EFOm6hwLcDuffj3H3jARQ8oUz1sUPIHCYlovdRcMAhqN57nFh8j7jCKVHZvAlTFX3Bu0oUpR5nUAaEPkkWck_y2yJ_YT52E-ovEUI5Ps0iMzN6MajVTYVfvBkBtvNvB1QVR0eormIERqtgP5__ujkqiNstJyig2ScRee6f8FcPi8pAfoOQ2SYpR_KVHeyZZRhn_Xmctbp3TX_nl0T2CynMfWCmU6RgCjRVrl2cd67lN57dp6T5j-Cr3Px3DBMjuuqJZ_d0rv33vrpHB4is_p735hXTXAkjlythb6fOHIQbO5gxqiKAWOeKRRvaYA2DOTPEJ90B7ZSIUKCSj2FTfQqP9mq-xoHFl5SAoKdCx0s58Aro8q8w3_hYVLDZzFJMv0ecMawz-3LiTT6ryuCNPvA_mDdaOCajGDRRL5JqrlUVJVEYmiVkj8eAJlL81t1noDfLYGiYug8SI6VPTWc0nxdilJ7ZaKwJzGFI-r2ZZ2Br9L0_1RMCozgukORMiO8YB73wxVtfUmp-Qbup45_tpHDaPtJP__epMP4137KkXNJNZKyOc44mZemlswVlZXTkP48uxtT-w.kICyvx1u00C3y9R9KPhl4A
 ```
 
-```javascript
-const kittn = require('kittn');
+Secpass token is a token that is in the form of compact serialized JWE whose payload after being decrypted is a compact serialized
+JWS.  
 
-let api = kittn.authorize('meowmeowmeow');
-```
+  - <a href='https://www.rfc-editor.org/rfc/rfc7516'>JWE specification</a>  
+  - <a href='https://www.rfc-editor.org/rfc/rfc7515'>JWS specification</a>
 
-> Make sure to replace `meowmeowmeow` with your API key.
+### Howto get the payload
+After receiving Secpass token, the application first needs to decrypt the token (using application's private key) to extract the 
+payload, then needs to verify the resulting token signature (using Secpass's public certificate). User's information is in the 
+payload of that JWS token. Secpass do not modify the 
+JSON data structure and leave it fully intact as received from **Myinfo**/**Myinfo Business**. Consult 
+**Myinfo**/**Myinfo Business** APIs documents to traverse the data effectively.
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+<aside class="warning">
+  On the event of invalid token signature, due to security reason, the application is advised to discard
+  the token.
 </aside>
 
-# Kittens
-
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
 ```shell
-curl "http://example.com/api/kittens" \
-  -H "Authorization: meowmeowmeow"
+  # Sample payload of decrypted Secpass token
+  eyJhbGciOiJFUzI1NiJ9.eyJuYW1lIjp7Imxhc3R1cGRhdGVkIjoiMjAyMy0wMy0wMiIsInNvdXJjZSI6IjEiLCJjbGFzc2lmaWNhdGlvbiI6IkMiLCJ2YWx1ZSI6IkJIQVNLQVIgTklMQU0gR0FESEFWSSJ9LCJkb2IiOnsibGFzdHVwZGF0ZWQiOiIyMDIzLTAzLTAyIiwic291cmNlIjoiMSIsImNsYXNzaWZpY2F0aW9uIjoiQyIsInZhbHVlIjoiMTk5MS0xMi0wNCJ9LCJ1aW5maW4iOnsibGFzdHVwZGF0ZWQiOiIyMDIzLTAzLTAyIiwic291cmNlIjoiMSIsImNsYXNzaWZpY2F0aW9uIjoiQyIsInZhbHVlIjoiUzkxNTM2MTZBIn0sIm5hdGlvbmFsaXR5Ijp7Imxhc3R1cGRhdGVkIjoiMjAyMy0wMy0wMiIsImNvZGUiOiJTRyIsInNvdXJjZSI6IjEiLCJjbGFzc2lmaWNhdGlvbiI6IkMiLCJkZXNjIjoiU0lOR0FQT1JFIENJVElaRU4ifSwibWFycmllZG5hbWUiOnsibGFzdHVwZGF0ZWQiOiIyMDIzLTAzLTAyIiwic291cmNlIjoiMSIsImNsYXNzaWZpY2F0aW9uIjoiQyIsInZhbHVlIjoiIn19.h2DCBNdj5Zy6hLe4PfZJW0umD9Eb9B3BQcQ8xm35Q97oniijFI_4yeHsG_qMDVcqmlUe1U6LTq5rw2ZrOt0SUg
 ```
 
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
-```
-
-> The above command returns JSON structured like this:
+> Sample payload of JWS:
 
 ```json
-[
   {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
+    "name": {
+      "lastupdated": "2023-03-02",
+      "source": "1",
+      "classification": "C",
+      "value": "BHASKAR NILAM GADHAVI"
+    },
+    "dob": {
+      "lastupdated": "2023-03-02",
+      "source": "1",
+      "classification": "C",
+      "value": "1991-12-04"
+    },
+    "uinfin": {
+      "lastupdated": "2023-03-02",
+      "source": "1",
+      "classification": "C",
+      "value": "S9153616A"
+    },
+    "nationality": {
+      "lastupdated": "2023-03-02",
+      "code": "SG",
+      "source": "1",
+      "classification": "C",
+      "desc": "SINGAPORE CITIZEN"
+    },
+    "marriedname": {
+      "lastupdated": "2023-03-02",
+      "source": "1",
+      "classification": "C",
+      "value": ""
+    }
   }
-]
-```
+```  
 
-This endpoint retrieves all kittens.
+| Secpass token metadata                | Value                                                                                               |
+|---------------------------------------|-----------------------------------------------------------------------------------------------------|
+| JWE **enc**                           | *A256GCM*                                                                                           |
+| JWE **alg**                           | *ECDH-ES* (<a href='https://www.rfc-editor.org/rfc/rfc7518#page-16'>specification</a>)              |
+| JWE decryption key for CEK encryption | Application *EC* private key whose public key was provided to Secpass during application onboarding |
+| JWS **alg**                           | *ES256*                                                                                             |
+| JWS signature verification key        | Secpass public key which was provided to application by Secpass during application onboarding       |
 
+
+# Myinfo Integration
+## Authorisation Request API
+### Description
+This API is to get an *OAuth authorisation request*, which can be used for sending request to **Myinfo** */authorise* API
 ### HTTP Request
+`GET https://{$instance}/myinfo/init`
 
-`GET http://example.com/api/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
+```shell
+  curl -X GET -H "Authorization: Basic ${API_key}" https://{$instance}/myinfo/init
+```
+### HTTP Response
 <aside class="success">
-Remember — a happy kitten is an authenticated kitten!
+This endpoint returns no response body. A successful call is indicated by the event that application receives a 302 response
+with redirect URI in the Location Header.
 </aside>
 
-## Get a Specific Kitten
+| HTTP Response Status | Meaning                                                                     |
+|-----|-----------------------------------------------------------------------------|
+| 302 | Redirect -- Proceed to redirect your user to the URI in Location Header.    |
+| 403 | Forbidden -- Invalid API key.                                               |
+| 500 | Internal Server Error -- We had a problem with our server. Try again later. |
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
+## Token API
+### Description
+This API is to exchange a *code* and *state* which are in the request URI that **Myinfo** redirects the user to after
+their authentication and consent giving, to get the Secpass token.
+### HTTP Request
+`POST https://{$instance}/myinfo/token?code={code}&state={state}`
 
 ```shell
-curl "http://example.com/api/kittens/2" \
-  -H "Authorization: meowmeowmeow"
+  curl -X POST -H 'Authorization: Basic ${API_key}' 'https://{$instance}/myinfo/token?code={code}&state={state}'
 ```
 
-```javascript
-const kittn = require('kittn');
+| Query Parameter | Description                                                                                     |
+|-----------------|-------------------------------------------------------------------------------------------------|
+| *code*          | Authorization code is received from **Myinfo** after user authenticates and gives their consent |
+| *state*         | This *state* value is received from **Myinfo** after user authenticates and gives their consent |
 
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
-```
+### HTTP Response
+On successful response i.e. status code 200, the response body is a [Secpass token](#secpass-token). The response 
+*Content-Type* is `application/jose`. Follow the[instruction](#howto-get-the-payload) to decrypt and verify Secpass token to get the JSON string for your application usage.
 
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
-```
-
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-
-### HTTP Request
-
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
-
-## Delete a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
+> Sample successful response
 
 ```shell
-curl "http://example.com/api/kittens/2" \
-  -X DELETE \
-  -H "Authorization: meowmeowmeow"
+  eyJlcGsiOnsia3R5IjoiRUMiLCJjcnYiOiJQLTI1NiIsIngiOiJBUnZHNEY4Tl8ydFhnVUUtM3pSWEtfa3hVZFY4QTVyX0FVNUxhR3hhdVVBIiwieSI6IjBwZDF5b1FQVXdNeHFkU2sydDBFT0FxOFpUanZrci1sUFZnb2dvTW9EUVkifSwiZW5jIjoiQTI1NkdDTSIsImFsZyI6IkVDREgtRVMifQ..bQ-uu0olNykhxjRI.IndhhSzUTwx6oswbqN1rIQMVc0SSH-Vy3sMuMgxF8bhyc7mhKSpw2M8_luGq9MCpk9cuML8BiwEq5B2WGOoVQzeFyC4lDpc61jZG01nwxc85zkzgTR_znhWBhaTsGLKHpEbm7woWe1aD9fJea8Fd-Fus-w8K1I2vGnTjT6gnsRdaQwWDlSXXYqpBPI7fv7hE4R5PmVilaKBYS6b65aOR3C_VNGaHBowgv3eR45BLv8KTnhqN94_6j0xZrTMwitnQATjoa7I3baxbGX0yIj7JWKz9kvHe6yPB1CZEFhr-jpktdeJf0XtAQ5Xzdl9-C5tWu0cp5EadMC2QCaCe7uQlmu36DmytOtSgNwUdEqRQfdbiVNnoEcvsFomN-JRy9Byg_mhzVDAYdVsdw867Lyb-j0iKHv_avXWE5uG5S-j4r8FZOH2EFOm6hwLcDuffj3H3jARQ8oUz1sUPIHCYlovdRcMAhqN57nFh8j7jCKVHZvAlTFX3Bu0oUpR5nUAaEPkkWck_y2yJ_YT52E-ovEUI5Ps0iMzN6MajVTYVfvBkBtvNvB1QVR0eormIERqtgP5__ujkqiNstJyig2ScRee6f8FcPi8pAfoOQ2SYpR_KVHeyZZRhn_Xmctbp3TX_nl0T2CynMfWCmU6RgCjRVrl2cd67lN57dp6T5j-Cr3Px3DBMjuuqJZ_d0rv33vrpHB4is_p735hXTXAkjlythb6fOHIQbO5gxqiKAWOeKRRvaYA2DOTPEJ90B7ZSIUKCSj2FTfQqP9mq-xoHFl5SAoKdCx0s58Aro8q8w3_hYVLDZzFJMv0ecMawz-3LiTT6ryuCNPvA_mDdaOCajGDRRL5JqrlUVJVEYmiVkj8eAJlL81t1noDfLYGiYug8SI6VPTWc0nxdilJ7ZaKwJzGFI-r2ZZ2Br9L0_1RMCozgukORMiO8YB73wxVtfUmp-Qbup45_tpHDaPtJP__epMP4137KkXNJNZKyOc44mZemlswVlZXTkP48uxtT-w.kICyvx1u00C3y9R9KPhl4A
 ```
 
-```javascript
-const kittn = require('kittn');
+| HTTP Response Status | Meaning                                                                     |
+|-----|-----------------------------------------------------------------------------|
+| 200 | Successfull -- Return encrypted JWS Secpass token                           |
+| 400 | Bad request -- Invalid *state* value                                        |
+| 403 | Forbidden -- Invalid API key.                                               |
+| 404 | Not found - Invalid **Myinfo** server response                              |
+| 500 | Internal Server Error -- We had a problem with our server. Try again later. |
 
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "deleted" : ":("
-}
-```
-
-This endpoint deletes a specific kitten.
-
+# Myinfo Business Integration
+## Authorisation Request API
+### Description
+This API is to get an *OAuth authorisation request*, which can be used for request to **Myinfo Business** */authorise* API
 ### HTTP Request
+`GET https://{$instance}/myinfobiz/init`
 
-`DELETE http://example.com/kittens/<ID>`
+```shell
+  curl -X GET -H 'Authorization: Basic ${API_key}' 'https://{$instance}/myinfobiz/init'
+```
+### HTTP Response
+<aside class="success">
+This endpoint returns no response body. A successful call is indicated by the event that application receives a 302 response
+with redirect URI in the Location Header.
+</aside>
 
-### URL Parameters
+| HTTP Response Status | Meaning                                                                     |
+|-----|-----------------------------------------------------------------------------|
+| 302 | Redirect -- Proceed to redirect your user to the URI in Location Header.    |
+| 403 | Forbidden -- Invalid API key.                                               |
+| 500 | Internal Server Error -- We had a problem with our server. Try again later. |
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
+## Token API
+### Description
+This API is to exchange a *code* and *state* which are in the request URI that **Myinfo business** redirects the user to after
+their authentication and consent giving, to get the Secpass token.
+### HTTP Request
+`POST https://{$instance}/myinfobiz/token?code={code}&state={state}`
 
+```shell
+  curl -X POST -H 'Authorization: Basic ${API_key}' 'https://{$instance}/myinfobiz/token?code={code}&state={state}'
+```
+
+| Query Parameter | Description                                                                                              |
+|-----------------|----------------------------------------------------------------------------------------------------------|
+| *code*          | Authorization code is received from **Myinfo business** after user authenticates and gives their consent |
+| *state*         | This *state* value is received from **Myinfo business** after user authenticates and gives their consent |
+
+### HTTP Response
+On successful response i.e. status code 200, the response body is a [Secpass token](#secpass-token). The response 
+*Content-Type* is `application/jose`. Follow the [instruction](#howto-get-the-payload) to 
+decrypt and verify Secpass token to get the JSON string for your application usage.
+
+> Sample successful response
+
+```shell
+  eyJlcGsiOnsia3R5IjoiRUMiLCJjcnYiOiJQLTI1NiIsIngiOiJBUnZHNEY4Tl8ydFhnVUUtM3pSWEtfa3hVZFY4QTVyX0FVNUxhR3hhdVVBIiwieSI6IjBwZDF5b1FQVXdNeHFkU2sydDBFT0FxOFpUanZrci1sUFZnb2dvTW9EUVkifSwiZW5jIjoiQTI1NkdDTSIsImFsZyI6IkVDREgtRVMifQ..bQ-uu0olNykhxjRI.IndhhSzUTwx6oswbqN1rIQMVc0SSH-Vy3sMuMgxF8bhyc7mhKSpw2M8_luGq9MCpk9cuML8BiwEq5B2WGOoVQzeFyC4lDpc61jZG01nwxc85zkzgTR_znhWBhaTsGLKHpEbm7woWe1aD9fJea8Fd-Fus-w8K1I2vGnTjT6gnsRdaQwWDlSXXYqpBPI7fv7hE4R5PmVilaKBYS6b65aOR3C_VNGaHBowgv3eR45BLv8KTnhqN94_6j0xZrTMwitnQATjoa7I3baxbGX0yIj7JWKz9kvHe6yPB1CZEFhr-jpktdeJf0XtAQ5Xzdl9-C5tWu0cp5EadMC2QCaCe7uQlmu36DmytOtSgNwUdEqRQfdbiVNnoEcvsFomN-JRy9Byg_mhzVDAYdVsdw867Lyb-j0iKHv_avXWE5uG5S-j4r8FZOH2EFOm6hwLcDuffj3H3jARQ8oUz1sUPIHCYlovdRcMAhqN57nFh8j7jCKVHZvAlTFX3Bu0oUpR5nUAaEPkkWck_y2yJ_YT52E-ovEUI5Ps0iMzN6MajVTYVfvBkBtvNvB1QVR0eormIERqtgP5__ujkqiNstJyig2ScRee6f8FcPi8pAfoOQ2SYpR_KVHeyZZRhn_Xmctbp3TX_nl0T2CynMfWCmU6RgCjRVrl2cd67lN57dp6T5j-Cr3Px3DBMjuuqJZ_d0rv33vrpHB4is_p735hXTXAkjlythb6fOHIQbO5gxqiKAWOeKRRvaYA2DOTPEJ90B7ZSIUKCSj2FTfQqP9mq-xoHFl5SAoKdCx0s58Aro8q8w3_hYVLDZzFJMv0ecMawz-3LiTT6ryuCNPvA_mDdaOCajGDRRL5JqrlUVJVEYmiVkj8eAJlL81t1noDfLYGiYug8SI6VPTWc0nxdilJ7ZaKwJzGFI-r2ZZ2Br9L0_1RMCozgukORMiO8YB73wxVtfUmp-Qbup45_tpHDaPtJP__epMP4137KkXNJNZKyOc44mZemlswVlZXTkP48uxtT-w.kICyvx1u00C3y9R9KPhl4A
+```
+
+| HTTP Response Status | Meaning                                                                     |
+|----------------------|-----------------------------------------------------------------------------|
+| 200                  | Successfull -- Return encrypted JWS Secpass token                           |
+| 400                  | Bad request -- Invalid *state* value                                        |
+| 403                  | Forbidden -- Invalid API key.                                               |
+| 404                  | Not found -- Invalid **Myinfo Business** server response                    |
+| 500                  | Internal Server Error -- We had a problem with our server. Try again later. |
