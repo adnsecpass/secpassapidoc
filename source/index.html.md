@@ -20,7 +20,7 @@ This APIs document details HTTP request and response for all Secpass APIs.
 ## Endpoints
 Secpass API endpoints are in the form of `https://{$instance}/{$provider}/{$endpoint}`. Value of `$instance` will be provisioned
 during application onboarding with Secpass, together with application API key (see the [API Authentication](#api-authentication)
-section)
+section).
 ## API Authentication
 Secpass API call requires application authentication by API key which will be provisioned during application onboarding. The API 
 key is
