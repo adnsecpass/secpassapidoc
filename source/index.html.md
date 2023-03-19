@@ -133,10 +133,10 @@ with redirect URI in the Location Header.
 This API is to exchange a *code* and *state* which are in the request URI that **Myinfo** redirects the user to after
 their authentication and consent giving, to get the Secpass token.
 ### HTTP Request
-`POST https://{$instance}/myinfo/token?code={code}&state={state}`
+`GET https://{$instance}/myinfo/token?code={code}&state={state}`
 
 ```shell
-  curl -X POST -H 'Authorization: Basic ${API_key}' 'https://{$instance}/myinfo/token?code={code}&state={state}'
+  curl -X GET -H 'Authorization: Basic ${API_key}' 'https://{$instance}/myinfo/token?code={code}&state={state}'
 ```
 
 | Query Parameter | Description                                                                                     |
@@ -189,10 +189,10 @@ with redirect URI in the Location Header.
 This API is to exchange a *code* and *state* which are in the request URI that **Myinfo business** redirects the user to after
 their authentication and consent giving, to get the Secpass token.
 ### HTTP Request
-`POST https://{$instance}/myinfobiz/token?code={code}&state={state}`
+`GET https://{$instance}/myinfobiz/token?code={code}&state={state}`
 
 ```shell
-  curl -X POST -H 'Authorization: Basic ${API_key}' 'https://{$instance}/myinfobiz/token?code={code}&state={state}'
+  curl -X GET -H 'Authorization: Basic ${API_key}' 'https://{$instance}/myinfobiz/token?code={code}&state={state}'
 ```
 
 | Query Parameter | Description                                                                                              |
