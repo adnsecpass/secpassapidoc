@@ -488,8 +488,8 @@ with redirect URI in the Location Header.
 <p>This API is to exchange a <em>code</em> and <em>state</em> which are in the request URI that <strong>Myinfo</strong> redirects the user to after
 their authentication and consent giving, to get the Secpass token.</p>
 <h3 id='http-request-2'>HTTP Request</h3>
-<p><code>POST https://{$instance}/myinfo/token?code={code}&amp;state={state}</code></p>
-<div class="highlight"><pre class="highlight shell tab-shell"><code>  curl <span class="nt">-X</span> POST <span class="nt">-H</span> <span class="s1">'Authorization: Basic ${API_key}'</span> <span class="s1">'https://{$instance}/myinfo/token?code={code}&amp;state={state}'</span>
+<p><code>GET https://{$instance}/myinfo/token?code={code}&amp;state={state}</code></p>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>  curl <span class="nt">-X</span> GET <span class="nt">-H</span> <span class="s1">'Authorization: Basic ${API_key}'</span> <span class="s1">'https://{$instance}/myinfo/token?code={code}&amp;state={state}'</span>
 </code></pre></div>
 <table><thead>
 <tr>
@@ -576,8 +576,8 @@ with redirect URI in the Location Header.
 <p>This API is to exchange a <em>code</em> and <em>state</em> which are in the request URI that <strong>Myinfo business</strong> redirects the user to after
 their authentication and consent giving, to get the Secpass token.</p>
 <h3 id='http-request-4'>HTTP Request</h3>
-<p><code>POST https://{$instance}/myinfobiz/token?code={code}&amp;state={state}</code></p>
-<div class="highlight"><pre class="highlight shell tab-shell"><code>  curl <span class="nt">-X</span> POST <span class="nt">-H</span> <span class="s1">'Authorization: Basic ${API_key}'</span> <span class="s1">'https://{$instance}/myinfobiz/token?code={code}&amp;state={state}'</span>
+<p><code>GET https://{$instance}/myinfobiz/token?code={code}&amp;state={state}</code></p>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>  curl <span class="nt">-X</span> GET <span class="nt">-H</span> <span class="s1">'Authorization: Basic ${API_key}'</span> <span class="s1">'https://{$instance}/myinfobiz/token?code={code}&amp;state={state}'</span>
 </code></pre></div>
 <table><thead>
 <tr>
