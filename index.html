@@ -379,8 +379,8 @@ JWS.  </p>
 <h3 id='howto-get-the-payload'>Howto get the payload</h3>
 <p>After receiving Secpass token, the application first needs to decrypt the token (using application&#39;s private key) to extract the 
 payload, then needs to verify the resulting token signature (using Secpass&#39;s public certificate). User&#39;s information is in the 
-payload of that JWS token. Secpass do not modify the 
-JSON data structure and leave it fully intact as received from <strong>Myinfo</strong>/<strong>Myinfo Business</strong>. Consult 
+payload of that JWS token. Secpass does not modify the 
+JSON data structure and leaves it fully intact as received from <strong>Myinfo</strong>/<strong>Myinfo Business</strong>. Consult 
 <strong>Myinfo</strong>/<strong>Myinfo Business</strong> APIs documents to traverse the data effectively.</p>
 
 <aside class="warning">
@@ -455,7 +455,7 @@ JSON data structure and leave it fully intact as received from <strong>Myinfo</s
 </tr>
 </tbody></table>
 <h1 id='myinfo-integration'>Myinfo Integration</h1><h2 id='authorisation-request-api'>Authorisation Request API</h2><h3 id='description'>Description</h3>
-<p>This API is to get an <em>OAuth authorisation request</em>, which can be used for sending request to <strong>Myinfo</strong> <em>/authorise</em> API</p>
+<p>This API is to get an <em>OAuth authorisation request</em>, which can be used for sending request to <strong>Myinfo</strong> <em>/authorise</em> API.</p>
 <h3 id='http-request'>HTTP Request</h3>
 <p><code>GET https://{$instance}/myinfo/init</code></p>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>  curl <span class="nt">-X</span> GET <span class="nt">-H</span> <span class="s2">"Authorization: Basic </span><span class="k">${</span><span class="nv">API_key</span><span class="k">}</span><span class="s2">"</span> https://<span class="o">{</span><span class="nv">$instance</span><span class="o">}</span>/myinfo/init
@@ -499,16 +499,16 @@ their authentication and consent giving, to get the Secpass token.</p>
 </thead><tbody>
 <tr>
 <td><em>code</em></td>
-<td>Authorization code is received from <strong>Myinfo</strong> after user authenticates and gives their consent</td>
+<td>Authorization code is received from <strong>Myinfo</strong> after user authenticates and gives their consent.</td>
 </tr>
 <tr>
 <td><em>state</em></td>
-<td>This <em>state</em> value is received from <strong>Myinfo</strong> after user authenticates and gives their consent</td>
+<td>This <em>state</em> value is received from <strong>Myinfo</strong> after user authenticates and gives their consent.</td>
 </tr>
 </tbody></table>
 <h3 id='http-response-2'>HTTP Response</h3>
 <p>On successful response i.e. status code 200, the response body is a <a href="#secpass-token">Secpass token</a>. The response 
-<em>Content-Type</em> is <code>application/jose</code>. Follow the<a href="#howto-get-the-payload">instruction</a> to decrypt and verify Secpass token to get the JSON string for your application usage.</p>
+<em>Content-Type</em> is <code>application/jose</code>. Follow the <a href="#howto-get-the-payload">instruction</a> to decrypt and verify Secpass token to get the JSON string for your application usage.</p>
 
 <blockquote>
 <p>Sample successful response</p>
@@ -523,11 +523,11 @@ their authentication and consent giving, to get the Secpass token.</p>
 </thead><tbody>
 <tr>
 <td>200</td>
-<td>Successfull -- Return encrypted JWS Secpass token</td>
+<td>Successfull -- Return encrypted JWS Secpass token.</td>
 </tr>
 <tr>
 <td>400</td>
-<td>Bad request -- Invalid <em>state</em> value</td>
+<td>Bad request -- Invalid <em>state</em> value.</td>
 </tr>
 <tr>
 <td>403</td>
@@ -535,7 +535,7 @@ their authentication and consent giving, to get the Secpass token.</p>
 </tr>
 <tr>
 <td>404</td>
-<td>Not found - Invalid <strong>Myinfo</strong> server response</td>
+<td>Not found - Invalid <strong>Myinfo</strong> server response.</td>
 </tr>
 <tr>
 <td>500</td>
@@ -543,7 +543,7 @@ their authentication and consent giving, to get the Secpass token.</p>
 </tr>
 </tbody></table>
 <h1 id='myinfo-business-integration'>Myinfo Business Integration</h1><h2 id='authorisation-request-api-2'>Authorisation Request API</h2><h3 id='description-3'>Description</h3>
-<p>This API is to get an <em>OAuth authorisation request</em>, which can be used for request to <strong>Myinfo Business</strong> <em>/authorise</em> API</p>
+<p>This API is to get an <em>OAuth authorisation request</em>, which can be used for request to <strong>Myinfo Business</strong> <em>/authorise</em> API.</p>
 <h3 id='http-request-3'>HTTP Request</h3>
 <p><code>GET https://{$instance}/myinfobiz/init</code></p>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>  curl <span class="nt">-X</span> GET <span class="nt">-H</span> <span class="s1">'Authorization: Basic ${API_key}'</span> <span class="s1">'https://{$instance}/myinfobiz/init'</span>
@@ -587,11 +587,11 @@ their authentication and consent giving, to get the Secpass token.</p>
 </thead><tbody>
 <tr>
 <td><em>code</em></td>
-<td>Authorization code is received from <strong>Myinfo business</strong> after user authenticates and gives their consent</td>
+<td>Authorization code is received from <strong>Myinfo business</strong> after user authenticates and gives their consent.</td>
 </tr>
 <tr>
 <td><em>state</em></td>
-<td>This <em>state</em> value is received from <strong>Myinfo business</strong> after user authenticates and gives their consent</td>
+<td>This <em>state</em> value is received from <strong>Myinfo business</strong> after user authenticates and gives their consent.</td>
 </tr>
 </tbody></table>
 <h3 id='http-response-4'>HTTP Response</h3>
@@ -612,11 +612,11 @@ decrypt and verify Secpass token to get the JSON string for your application usa
 </thead><tbody>
 <tr>
 <td>200</td>
-<td>Successfull -- Return encrypted JWS Secpass token</td>
+<td>Successfull -- Return encrypted JWS Secpass token.</td>
 </tr>
 <tr>
 <td>400</td>
-<td>Bad request -- Invalid <em>state</em> value</td>
+<td>Bad request -- Invalid <em>state</em> value.</td>
 </tr>
 <tr>
 <td>403</td>
@@ -624,7 +624,7 @@ decrypt and verify Secpass token to get the JSON string for your application usa
 </tr>
 <tr>
 <td>404</td>
-<td>Not found -- Invalid <strong>Myinfo Business</strong> server response</td>
+<td>Not found -- Invalid <strong>Myinfo Business</strong> server response.</td>
 </tr>
 <tr>
 <td>500</td>
