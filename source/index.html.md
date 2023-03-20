@@ -18,7 +18,7 @@ meta:
 This APIs document details HTTP request and response for all Secpass APIs.
 
 ## Endpoints
-Secpass API endpoints are in the form of `https://{$instance}/{$provider}/{$endpoint}`. Value of `$instance` will be provisioned
+Secpass API endpoints are in the form of `https://${instance}/${provider}/${endpoint}`. Value of `$instance` will be provisioned
 during application onboarding with Secpass, together with application API key (see the [API Authentication](#api-authentication)
 section).
 ## API Authentication
@@ -111,10 +111,10 @@ JSON data structure and leaves it fully intact as received from **Myinfo**/**Myi
 ### Description
 This API is to get an *OAuth authorisation request*, which can be used for sending request to **Myinfo** */authorise* API.
 ### HTTP Request
-`GET https://{$instance}/myinfo/init`
+`GET https://${instance}/myinfo/init`
 
 ```shell
-  curl -X GET -H "Authorization: Basic ${API_key}" https://{$instance}/myinfo/init
+  curl -X GET -H 'Authorization: Basic ${API_key}' 'https://${instance}/myinfo/init'
 ```
 ### HTTP Response
 <aside class="success">
@@ -133,16 +133,16 @@ with redirect URI in the Location Header.
 This API is to exchange a *code* and *state* which are in the request URI that **Myinfo** redirects the user to after
 their authentication and consent giving, to get the Secpass token.
 ### HTTP Request
-`GET https://{$instance}/myinfo/token?code={code}&state={state}`
+`GET https://${instance}/myinfo/token?code=${code}&state=${state}`
 
 ```shell
-  curl -X GET -H 'Authorization: Basic ${API_key}' 'https://{$instance}/myinfo/token?code={code}&state={state}'
+  curl -X GET -H 'Authorization: Basic ${API_key}' 'https://${instance}/myinfo/token?code=${code}&state=${state}'
 ```
 
 | Query Parameter | Description                                                                                      |
 |-----------------|--------------------------------------------------------------------------------------------------|
-| *code*          | Authorization code is received from **Myinfo** after user authenticates and gives their consent. |
-| *state*         | This *state* value is received from **Myinfo** after user authenticates and gives their consent. |
+| *code*          | Authorization code ${code} is received from **Myinfo** after user authenticates and gives their consent. |
+| *state*         | This ${state} is received from **Myinfo** after user authenticates and gives their consent. |
 
 ### HTTP Response
 On successful response i.e. status code 200, the response body is a [Secpass token](#secpass-token). The response 
@@ -167,10 +167,10 @@ On successful response i.e. status code 200, the response body is a [Secpass tok
 ### Description
 This API is to get an *OAuth authorisation request*, which can be used for request to **Myinfo Business** */authorise* API.
 ### HTTP Request
-`GET https://{$instance}/myinfobiz/init`
+`GET https://${instance}/myinfobiz/init`
 
 ```shell
-  curl -X GET -H 'Authorization: Basic ${API_key}' 'https://{$instance}/myinfobiz/init'
+  curl -X GET -H 'Authorization: Basic ${API_key}' 'https://${instance}/myinfobiz/init'
 ```
 ### HTTP Response
 <aside class="success">
@@ -189,16 +189,16 @@ with redirect URI in the Location Header.
 This API is to exchange a *code* and *state* which are in the request URI that **Myinfo business** redirects the user to after
 their authentication and consent giving, to get the Secpass token.
 ### HTTP Request
-`GET https://{$instance}/myinfobiz/token?code={code}&state={state}`
+`GET https://${instance}/myinfobiz/token?code=${code}&state=${state}`
 
 ```shell
-  curl -X GET -H 'Authorization: Basic ${API_key}' 'https://{$instance}/myinfobiz/token?code={code}&state={state}'
+  curl -X GET -H 'Authorization: Basic ${API_key}' 'https://${instance}/myinfobiz/token?code=${code}&state=${state}'
 ```
 
 | Query Parameter | Description                                                                                               |
 |-----------------|-----------------------------------------------------------------------------------------------------------|
-| *code*          | Authorization code is received from **Myinfo business** after user authenticates and gives their consent. |
-| *state*         | This *state* value is received from **Myinfo business** after user authenticates and gives their consent. |
+| *code*          | Authorization code ${code} is received from **Myinfo business** after user authenticates and gives their consent. |
+| *state*         | This ${state} is received from **Myinfo business** after user authenticates and gives their consent. |
 
 ### HTTP Response
 On successful response i.e. status code 200, the response body is a [Secpass token](#secpass-token). The response 
