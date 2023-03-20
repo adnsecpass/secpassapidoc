@@ -45,8 +45,8 @@ JWS.
 ### Howto get the payload
 After receiving Secpass token, the application first needs to decrypt the token (using application's private key) to extract the 
 payload, then needs to verify the resulting token signature (using Secpass's public certificate). User's information is in the 
-payload of that JWS token. Secpass do not modify the 
-JSON data structure and leave it fully intact as received from **Myinfo**/**Myinfo Business**. Consult 
+payload of that JWS token. Secpass does not modify the 
+JSON data structure and leaves it fully intact as received from **Myinfo**/**Myinfo Business**. Consult 
 **Myinfo**/**Myinfo Business** APIs documents to traverse the data effectively.
 
 <aside class="warning">
@@ -109,7 +109,7 @@ JSON data structure and leave it fully intact as received from **Myinfo**/**Myin
 # Myinfo Integration
 ## Authorisation Request API
 ### Description
-This API is to get an *OAuth authorisation request*, which can be used for sending request to **Myinfo** */authorise* API
+This API is to get an *OAuth authorisation request*, which can be used for sending request to **Myinfo** */authorise* API.
 ### HTTP Request
 `GET https://{$instance}/myinfo/init`
 
@@ -122,7 +122,7 @@ This endpoint returns no response body. A successful call is indicated by the ev
 with redirect URI in the Location Header.
 </aside>
 
-| HTTP Response Status | Meaning                                                                     |
+| HTTP Response Status | Meaning                                                    |
 |-----|-----------------------------------------------------------------------------|
 | 302 | Redirect -- Proceed to redirect your user to the URI in Location Header.    |
 | 403 | Forbidden -- Invalid API key.                                               |
@@ -139,14 +139,14 @@ their authentication and consent giving, to get the Secpass token.
   curl -X GET -H 'Authorization: Basic ${API_key}' 'https://{$instance}/myinfo/token?code={code}&state={state}'
 ```
 
-| Query Parameter | Description                                                                                     |
-|-----------------|-------------------------------------------------------------------------------------------------|
-| *code*          | Authorization code is received from **Myinfo** after user authenticates and gives their consent |
-| *state*         | This *state* value is received from **Myinfo** after user authenticates and gives their consent |
+| Query Parameter | Description                                                                                      |
+|-----------------|--------------------------------------------------------------------------------------------------|
+| *code*          | Authorization code is received from **Myinfo** after user authenticates and gives their consent. |
+| *state*         | This *state* value is received from **Myinfo** after user authenticates and gives their consent. |
 
 ### HTTP Response
 On successful response i.e. status code 200, the response body is a [Secpass token](#secpass-token). The response 
-*Content-Type* is `application/jose`. Follow the[instruction](#howto-get-the-payload) to decrypt and verify Secpass token to get the JSON string for your application usage.
+*Content-Type* is `application/jose`. Follow the [instruction](#howto-get-the-payload) to decrypt and verify Secpass token to get the JSON string for your application usage.
 
 > Sample successful response
 
@@ -154,18 +154,18 @@ On successful response i.e. status code 200, the response body is a [Secpass tok
   eyJlcGsiOnsia3R5IjoiRUMiLCJjcnYiOiJQLTI1NiIsIngiOiJBUnZHNEY4Tl8ydFhnVUUtM3pSWEtfa3hVZFY4QTVyX0FVNUxhR3hhdVVBIiwieSI6IjBwZDF5b1FQVXdNeHFkU2sydDBFT0FxOFpUanZrci1sUFZnb2dvTW9EUVkifSwiZW5jIjoiQTI1NkdDTSIsImFsZyI6IkVDREgtRVMifQ..bQ-uu0olNykhxjRI.IndhhSzUTwx6oswbqN1rIQMVc0SSH-Vy3sMuMgxF8bhyc7mhKSpw2M8_luGq9MCpk9cuML8BiwEq5B2WGOoVQzeFyC4lDpc61jZG01nwxc85zkzgTR_znhWBhaTsGLKHpEbm7woWe1aD9fJea8Fd-Fus-w8K1I2vGnTjT6gnsRdaQwWDlSXXYqpBPI7fv7hE4R5PmVilaKBYS6b65aOR3C_VNGaHBowgv3eR45BLv8KTnhqN94_6j0xZrTMwitnQATjoa7I3baxbGX0yIj7JWKz9kvHe6yPB1CZEFhr-jpktdeJf0XtAQ5Xzdl9-C5tWu0cp5EadMC2QCaCe7uQlmu36DmytOtSgNwUdEqRQfdbiVNnoEcvsFomN-JRy9Byg_mhzVDAYdVsdw867Lyb-j0iKHv_avXWE5uG5S-j4r8FZOH2EFOm6hwLcDuffj3H3jARQ8oUz1sUPIHCYlovdRcMAhqN57nFh8j7jCKVHZvAlTFX3Bu0oUpR5nUAaEPkkWck_y2yJ_YT52E-ovEUI5Ps0iMzN6MajVTYVfvBkBtvNvB1QVR0eormIERqtgP5__ujkqiNstJyig2ScRee6f8FcPi8pAfoOQ2SYpR_KVHeyZZRhn_Xmctbp3TX_nl0T2CynMfWCmU6RgCjRVrl2cd67lN57dp6T5j-Cr3Px3DBMjuuqJZ_d0rv33vrpHB4is_p735hXTXAkjlythb6fOHIQbO5gxqiKAWOeKRRvaYA2DOTPEJ90B7ZSIUKCSj2FTfQqP9mq-xoHFl5SAoKdCx0s58Aro8q8w3_hYVLDZzFJMv0ecMawz-3LiTT6ryuCNPvA_mDdaOCajGDRRL5JqrlUVJVEYmiVkj8eAJlL81t1noDfLYGiYug8SI6VPTWc0nxdilJ7ZaKwJzGFI-r2ZZ2Br9L0_1RMCozgukORMiO8YB73wxVtfUmp-Qbup45_tpHDaPtJP__epMP4137KkXNJNZKyOc44mZemlswVlZXTkP48uxtT-w.kICyvx1u00C3y9R9KPhl4A
 ```
 
-| HTTP Response Status | Meaning                                                                     |
-|-----|-----------------------------------------------------------------------------|
-| 200 | Successfull -- Return encrypted JWS Secpass token                           |
-| 400 | Bad request -- Invalid *state* value                                        |
-| 403 | Forbidden -- Invalid API key.                                               |
-| 404 | Not found - Invalid **Myinfo** server response                              |
-| 500 | Internal Server Error -- We had a problem with our server. Try again later. |
+| HTTP Response Status | Meaning                                                     |
+|-----|------------------------------------------------------------------------------|
+| 200 | Successfull -- Return encrypted JWS Secpass token.                           |
+| 400 | Bad request -- Invalid *state* value.                                        |
+| 403 | Forbidden -- Invalid API key.                                                |
+| 404 | Not found - Invalid **Myinfo** server response.                              |
+| 500 | Internal Server Error -- We had a problem with our server. Try again later.  |
 
 # Myinfo Business Integration
 ## Authorisation Request API
 ### Description
-This API is to get an *OAuth authorisation request*, which can be used for request to **Myinfo Business** */authorise* API
+This API is to get an *OAuth authorisation request*, which can be used for request to **Myinfo Business** */authorise* API.
 ### HTTP Request
 `GET https://{$instance}/myinfobiz/init`
 
@@ -178,7 +178,7 @@ This endpoint returns no response body. A successful call is indicated by the ev
 with redirect URI in the Location Header.
 </aside>
 
-| HTTP Response Status | Meaning                                                                     |
+| HTTP Response Status | Meaning                                                    |
 |-----|-----------------------------------------------------------------------------|
 | 302 | Redirect -- Proceed to redirect your user to the URI in Location Header.    |
 | 403 | Forbidden -- Invalid API key.                                               |
@@ -195,10 +195,10 @@ their authentication and consent giving, to get the Secpass token.
   curl -X GET -H 'Authorization: Basic ${API_key}' 'https://{$instance}/myinfobiz/token?code={code}&state={state}'
 ```
 
-| Query Parameter | Description                                                                                              |
-|-----------------|----------------------------------------------------------------------------------------------------------|
-| *code*          | Authorization code is received from **Myinfo business** after user authenticates and gives their consent |
-| *state*         | This *state* value is received from **Myinfo business** after user authenticates and gives their consent |
+| Query Parameter | Description                                                                                               |
+|-----------------|-----------------------------------------------------------------------------------------------------------|
+| *code*          | Authorization code is received from **Myinfo business** after user authenticates and gives their consent. |
+| *state*         | This *state* value is received from **Myinfo business** after user authenticates and gives their consent. |
 
 ### HTTP Response
 On successful response i.e. status code 200, the response body is a [Secpass token](#secpass-token). The response 
@@ -211,10 +211,10 @@ decrypt and verify Secpass token to get the JSON string for your application usa
   eyJlcGsiOnsia3R5IjoiRUMiLCJjcnYiOiJQLTI1NiIsIngiOiJBUnZHNEY4Tl8ydFhnVUUtM3pSWEtfa3hVZFY4QTVyX0FVNUxhR3hhdVVBIiwieSI6IjBwZDF5b1FQVXdNeHFkU2sydDBFT0FxOFpUanZrci1sUFZnb2dvTW9EUVkifSwiZW5jIjoiQTI1NkdDTSIsImFsZyI6IkVDREgtRVMifQ..bQ-uu0olNykhxjRI.IndhhSzUTwx6oswbqN1rIQMVc0SSH-Vy3sMuMgxF8bhyc7mhKSpw2M8_luGq9MCpk9cuML8BiwEq5B2WGOoVQzeFyC4lDpc61jZG01nwxc85zkzgTR_znhWBhaTsGLKHpEbm7woWe1aD9fJea8Fd-Fus-w8K1I2vGnTjT6gnsRdaQwWDlSXXYqpBPI7fv7hE4R5PmVilaKBYS6b65aOR3C_VNGaHBowgv3eR45BLv8KTnhqN94_6j0xZrTMwitnQATjoa7I3baxbGX0yIj7JWKz9kvHe6yPB1CZEFhr-jpktdeJf0XtAQ5Xzdl9-C5tWu0cp5EadMC2QCaCe7uQlmu36DmytOtSgNwUdEqRQfdbiVNnoEcvsFomN-JRy9Byg_mhzVDAYdVsdw867Lyb-j0iKHv_avXWE5uG5S-j4r8FZOH2EFOm6hwLcDuffj3H3jARQ8oUz1sUPIHCYlovdRcMAhqN57nFh8j7jCKVHZvAlTFX3Bu0oUpR5nUAaEPkkWck_y2yJ_YT52E-ovEUI5Ps0iMzN6MajVTYVfvBkBtvNvB1QVR0eormIERqtgP5__ujkqiNstJyig2ScRee6f8FcPi8pAfoOQ2SYpR_KVHeyZZRhn_Xmctbp3TX_nl0T2CynMfWCmU6RgCjRVrl2cd67lN57dp6T5j-Cr3Px3DBMjuuqJZ_d0rv33vrpHB4is_p735hXTXAkjlythb6fOHIQbO5gxqiKAWOeKRRvaYA2DOTPEJ90B7ZSIUKCSj2FTfQqP9mq-xoHFl5SAoKdCx0s58Aro8q8w3_hYVLDZzFJMv0ecMawz-3LiTT6ryuCNPvA_mDdaOCajGDRRL5JqrlUVJVEYmiVkj8eAJlL81t1noDfLYGiYug8SI6VPTWc0nxdilJ7ZaKwJzGFI-r2ZZ2Br9L0_1RMCozgukORMiO8YB73wxVtfUmp-Qbup45_tpHDaPtJP__epMP4137KkXNJNZKyOc44mZemlswVlZXTkP48uxtT-w.kICyvx1u00C3y9R9KPhl4A
 ```
 
-| HTTP Response Status | Meaning                                                                     |
-|----------------------|-----------------------------------------------------------------------------|
-| 200                  | Successfull -- Return encrypted JWS Secpass token                           |
-| 400                  | Bad request -- Invalid *state* value                                        |
-| 403                  | Forbidden -- Invalid API key.                                               |
-| 404                  | Not found -- Invalid **Myinfo Business** server response                    |
-| 500                  | Internal Server Error -- We had a problem with our server. Try again later. |
+| HTTP Response Status | Meaning                                                                      |
+|----------------------|------------------------------------------------------------------------------|
+| 200                  | Successfull -- Return encrypted JWS Secpass token.                           |
+| 400                  | Bad request -- Invalid *state* value.                                        |
+| 403                  | Forbidden -- Invalid API key.                                                |
+| 404                  | Not found -- Invalid **Myinfo Business** server response.                    |
+| 500                  | Internal Server Error -- We had a problem with our server. Try again later.  |
