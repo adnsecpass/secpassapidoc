@@ -328,10 +328,21 @@
               </ul>
           </li>
           <li>
-            <a href="#myinfo-integration" class="toc-h1 toc-link" data-title="Myinfo Integration">Myinfo Integration</a>
+            <a href="#singpass-login-integration" class="toc-h1 toc-link" data-title="Singpass Login Integration">Singpass Login Integration</a>
               <ul class="toc-list-h2">
                   <li>
                     <a href="#authorisation-request-api" class="toc-h2 toc-link" data-title="Authorisation Request API">Authorisation Request API</a>
+                  </li>
+                  <li>
+                    <a href="#user-info-api" class="toc-h2 toc-link" data-title="User Info API">User Info API</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#myinfo-integration" class="toc-h1 toc-link" data-title="Myinfo Integration">Myinfo Integration</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#authorisation-request-api-2" class="toc-h2 toc-link" data-title="Authorisation Request API">Authorisation Request API</a>
                   </li>
                   <li>
                     <a href="#token-api" class="toc-h2 toc-link" data-title="Token API">Token API</a>
@@ -342,7 +353,7 @@
             <a href="#myinfo-business-integration" class="toc-h1 toc-link" data-title="Myinfo Business Integration">Myinfo Business Integration</a>
               <ul class="toc-list-h2">
                   <li>
-                    <a href="#authorisation-request-api-2" class="toc-h2 toc-link" data-title="Authorisation Request API">Authorisation Request API</a>
+                    <a href="#authorisation-request-api-3" class="toc-h2 toc-link" data-title="Authorisation Request API">Authorisation Request API</a>
                   </li>
                   <li>
                     <a href="#token-api-2" class="toc-h2 toc-link" data-title="Token API">Token API</a>
@@ -357,16 +368,36 @@
         <h1 id='welcome-to-secpass-apis-document'>Welcome to Secpass APIs Document!</h1>
 <p>This APIs document details HTTP request and response for all Secpass APIs.</p>
 <h2 id='endpoints'>Endpoints</h2>
-<p>Secpass API endpoints are in the form of <code>https://${instance}/${provider}/${endpoint}</code>. Value of <code>$instance</code> will be provisioned
-during application onboarding with Secpass, together with application API key (see the <a href="#api-authentication">API Authentication</a>
-section).</p>
+<p>Secpass API endpoints are in the form of <code>https://${instance}/${provider}/${endpoint}</code>. Value of <code>$instance</code> will be provisioned during application onboarding with Secpass, together with application API key (see the <a href="#api-authentication">API Authentication</a> section). If a sandbox instance is provided, there will be no API key required.</p>
 <h2 id='api-authentication'>API Authentication</h2>
 <p>Secpass API call requires application authentication by API key which will be provisioned during application onboarding. The API 
 key is
 placed in <strong>Authorization</strong> header:  </p>
 
 <p><code>Authorization: Basic ${API_key}</code></p>
-<h2 id='secpass-token-consumption'>Secpass token consumption</h2><h3 id='secpass-token'>Secpass token</h3><div class="highlight"><pre class="highlight shell tab-shell"><code>  <span class="c"># Sample Secpass token</span>
+<h2 id='secpass-token-consumption'>Secpass token consumption</h2><h3 id='secpass-token-from-singpass-login-service'>Secpass token from Singpass Login service</h3><div class="highlight"><pre class="highlight shell tab-shell"><code>  <span class="c"># Sample Secpass token</span>
+  eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1PWE5ODY1ODM3LTdiZDctNDZhYy1iZWY0LTQyYTc2YTk0NjQyNCJ9.E5_qq6PBTIETXA3mPyVpbwoNC-SSrmHoravbG-iSIV4fcmN_dVVbTlvShQVTIWoeACOrtppAvqVqpJBkEnCeXGa3UnomHlpS8xvd3tWl-NT12BYMYgYkNkOT91Auzvmbd4e9rCCW8mYlj8S4YML25S_dJJTQ3NSATRHYH41vXTj-6G8Ko3V4yt5DGRcRa6qARTj1lNZLRXuDNbI9sxQY-zipnSdpSHhsh97wNuFUTIeDu1EjF1_Th9sB676PQgzKxBtpF_hKvT6LzrNZMhyV5Pg7H_BcIMz8VnAxtKgOfv-O0NeqTIMSrinA7NB6YkGVXZw92EnV4jEmy-JUwqnUoA
+</code></pre></div>
+<p>Secpass token is a token that is in the form of compact serialized JWS.</p>
+
+<ul>
+<li><a href='https://www.rfc-editor.org/rfc/rfc7515'>JWS specification</a></li>
+</ul>
+
+<p>After receiving Secpass token, the application needs to verify the resulting token signature (using Secpass&#39;s public certificate). User&#39;s information from the payload of that JWS token contains only the UUID value of its Singpass credential.</p>
+
+<aside class="warning">
+  On the event of invalid token signature, due to security reason, the application is advised to discard
+  the token.
+</aside>
+
+<blockquote>
+<p>Sample payload of JWS:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"sub"</span><span class="p">:</span><span class="w"> </span><span class="s2">"u=a9865837-7bd7-46ac-bef4-42a76a946424"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div><h3 id='secpass-token-from-singpass-myinfo-service'>Secpass token from Singpass Myinfo service</h3><div class="highlight"><pre class="highlight shell tab-shell"><code>  <span class="c"># Sample Secpass token</span>
   eyJlcGsiOnsia3R5IjoiRUMiLCJjcnYiOiJQLTI1NiIsIngiOiJBUnZHNEY4Tl8ydFhnVUUtM3pSWEtfa3hVZFY4QTVyX0FVNUxhR3hhdVVBIiwieSI6IjBwZDF5b1FQVXdNeHFkU2sydDBFT0FxOFpUanZrci1sUFZnb2dvTW9EUVkifSwiZW5jIjoiQTI1NkdDTSIsImFsZyI6IkVDREgtRVMifQ..bQ-uu0olNykhxjRI.IndhhSzUTwx6oswbqN1rIQMVc0SSH-Vy3sMuMgxF8bhyc7mhKSpw2M8_luGq9MCpk9cuML8BiwEq5B2WGOoVQzeFyC4lDpc61jZG01nwxc85zkzgTR_znhWBhaTsGLKHpEbm7woWe1aD9fJea8Fd-Fus-w8K1I2vGnTjT6gnsRdaQwWDlSXXYqpBPI7fv7hE4R5PmVilaKBYS6b65aOR3C_VNGaHBowgv3eR45BLv8KTnhqN94_6j0xZrTMwitnQATjoa7I3baxbGX0yIj7JWKz9kvHe6yPB1CZEFhr-jpktdeJf0XtAQ5Xzdl9-C5tWu0cp5EadMC2QCaCe7uQlmu36DmytOtSgNwUdEqRQfdbiVNnoEcvsFomN-JRy9Byg_mhzVDAYdVsdw867Lyb-j0iKHv_avXWE5uG5S-j4r8FZOH2EFOm6hwLcDuffj3H3jARQ8oUz1sUPIHCYlovdRcMAhqN57nFh8j7jCKVHZvAlTFX3Bu0oUpR5nUAaEPkkWck_y2yJ_YT52E-ovEUI5Ps0iMzN6MajVTYVfvBkBtvNvB1QVR0eormIERqtgP5__ujkqiNstJyig2ScRee6f8FcPi8pAfoOQ2SYpR_KVHeyZZRhn_Xmctbp3TX_nl0T2CynMfWCmU6RgCjRVrl2cd67lN57dp6T5j-Cr3Px3DBMjuuqJZ_d0rv33vrpHB4is_p735hXTXAkjlythb6fOHIQbO5gxqiKAWOeKRRvaYA2DOTPEJ90B7ZSIUKCSj2FTfQqP9mq-xoHFl5SAoKdCx0s58Aro8q8w3_hYVLDZzFJMv0ecMawz-3LiTT6ryuCNPvA_mDdaOCajGDRRL5JqrlUVJVEYmiVkj8eAJlL81t1noDfLYGiYug8SI6VPTWc0nxdilJ7ZaKwJzGFI-r2ZZ2Br9L0_1RMCozgukORMiO8YB73wxVtfUmp-Qbup45_tpHDaPtJP__epMP4137KkXNJNZKyOc44mZemlswVlZXTkP48uxtT-w.kICyvx1u00C3y9R9KPhl4A
 </code></pre></div>
 <p>Secpass token is a token that is in the form of compact serialized JWE whose payload after being decrypted is a compact serialized
@@ -454,12 +485,120 @@ JSON data structure and leaves it fully intact as received from <strong>Myinfo</
 <td>Secpass public key which was provided to application by Secpass during application onboarding</td>
 </tr>
 </tbody></table>
-<h1 id='myinfo-integration'>Myinfo Integration</h1><h2 id='authorisation-request-api'>Authorisation Request API</h2><h3 id='description'>Description</h3>
-<p>This API is to get an <em>OAuth authorisation request</em>, which can be used for sending request to <strong>Myinfo</strong> <em>/authorise</em> API.</p>
+<h1 id='singpass-login-integration'>Singpass Login Integration</h1><h2 id='authorisation-request-api'>Authorisation Request API</h2><h3 id='description'>Description</h3>
+<p>This API returns a Singpass login URL. The user-agent/browser should redirect user to this URL when user trigger login with Singpass.</p>
 <h3 id='http-request'>HTTP Request</h3>
+<p><code>POST https://${instance}/oidc/singpass/authReqUri</code></p>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="s1">'https://${instance}:4201/oidc/singpass/authReqUri'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'Authorization: Basic ${API_key}'</span> <span class="se">\</span>
+<span class="nt">--data</span> <span class="s1">'{ "purpose": "login" }'</span>
+</code></pre></div>
+<table><thead>
+<tr>
+<th>Request body</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><em>purpose</em></td>
+<td>Can take the value <em>login</em></td>
+</tr>
+</tbody></table>
+<h3 id='http-response'>HTTP Response</h3>
+<aside class="success">
+This endpoint returns a Singpass login URL in the response body. The user-agent/browser should redirect user to this URL when user trigger login with Singpass.
+</aside>
+
+<blockquote>
+<p>Sample successful response</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"authReqUri"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://adnsg-public.southeastasia.cloudapp.azure.com:5157/singpass/authorize?purpose=login&amp;scope=openid&amp;response_type=code&amp;redirect_uri=http%3A%2F%2Flocalhost%3A4200&amp;state=tMrpao0g_V2paGvT4fEC57oGC9xFW7FpuQOTuStY2Qg&amp;nonce=DH2HjZJIbsBpmuppBj_vIWzLMWmpaA0b-kKP9AO--68&amp;client_id=f3fdfa0cae866ba3b81777c5bfc44206"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<table><thead>
+<tr>
+<th>HTTP Response Status</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>200</td>
+<td>Redirect -- Proceed to redirect your user to the URI in the response body.</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden -- Invalid API key.</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error -- We had a problem with our server. Try again later.</td>
+</tr>
+</tbody></table>
+<h2 id='user-info-api'>User Info API</h2><h3 id='description-2'>Description</h3>
+<p>This API is to exchange a <em>code</em> and <em>state</em> which are in the request URI that <strong>Singpass</strong> redirects the user to the application&#39;s callback URL after their successful authentication, to get the Secpass token.</p>
+<h3 id='http-request-2'>HTTP Request</h3>
+<p><code>POST https://${instance}/oidc/singpass/userInfo</code></p>
+<div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="nt">--location</span> <span class="s1">'https://${instance}:4201/oidc/singpass/userInfo'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
+<span class="nt">--header</span> <span class="s1">'Authorization: Basic ${API_key}'</span> <span class="se">\</span>
+<span class="nt">--data</span> <span class="s1">'{ "authCode": "XXXXX", "state": "XXXXX" }
+</span></code></pre></div>
+<table><thead>
+<tr>
+<th>Request body</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><em>authCode</em></td>
+<td>a code received as request&#39;s query string at the application&#39;s callback URL after successful authentication at Singpass Login portal</td>
+</tr>
+<tr>
+<td><em>state</em></td>
+<td>a state value received as request&#39;s query string at the application&#39;s callback URL after successful authentication at Singpass Login portal&quot;</td>
+</tr>
+</tbody></table>
+<h3 id='http-response-2'>HTTP Response</h3>
+<p>On successful response i.e. status code 200, the response body is a <a href="#secpass-token-from-singpass-login-service">Secpass token from Singpass Login service</a>. The response <em>Content-Type</em> is <code>application/jose</code>.</p>
+
+<blockquote>
+<p>Sample successful response</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1PWE5ODY1ODM3LTdiZDctNDZhYy1iZWY0LTQyYTc2YTk0NjQyNCJ9.E5_qq6PBTIETXA3mPyVpbwoNC-SSrmHoravbG-iSIV4fcmN_dVVbTlvShQVTIWoeACOrtppAvqVqpJBkEnCeXGa3UnomHlpS8xvd3tWl-NT12BYMYgYkNkOT91Auzvmbd4e9rCCW8mYlj8S4YML25S_dJJTQ3NSATRHYH41vXTj-6G8Ko3V4yt5DGRcRa6qARTj1lNZLRXuDNbI9sxQY-zipnSdpSHhsh97wNuFUTIeDu1EjF1_Th9sB676PQgzKxBtpF_hKvT6LzrNZMhyV5Pg7H_BcIMz8VnAxtKgOfv-O0NeqTIMSrinA7NB6YkGVXZw92EnV4jEmy-JUwqnUoA"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<table><thead>
+<tr>
+<th>HTTP Response Status</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>200</td>
+<td>Successfull -- Return encrypted JWS Secpass token.</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad request -- Invalid <em>state</em> value.</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden -- Invalid API key.</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error -- We had a problem with our server. Try again later.</td>
+</tr>
+</tbody></table>
+<h1 id='myinfo-integration'>Myinfo Integration</h1><h2 id='authorisation-request-api-2'>Authorisation Request API</h2><h3 id='description-3'>Description</h3>
+<p>This API is to get an <em>OAuth authorisation request</em>, which can be used for sending request to <strong>Myinfo</strong> <em>/authorise</em> API.</p>
+<h3 id='http-request-3'>HTTP Request</h3>
 <p><code>GET https://${instance}/myinfo/init</code></p>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>  curl <span class="nt">-X</span> GET <span class="nt">-H</span> <span class="s1">'Authorization: Basic ${API_key}'</span> <span class="s1">'https://${instance}/myinfo/init'</span>
-</code></pre></div><h3 id='http-response'>HTTP Response</h3>
+</code></pre></div><h3 id='http-response-3'>HTTP Response</h3>
 <aside class="success">
 This endpoint returns no response body. A successful call is indicated by the event that application receives a 302 response
 with redirect URI in the Location Header.
@@ -484,10 +623,10 @@ with redirect URI in the Location Header.
 <td>Internal Server Error -- We had a problem with our server. Try again later.</td>
 </tr>
 </tbody></table>
-<h2 id='token-api'>Token API</h2><h3 id='description-2'>Description</h3>
+<h2 id='token-api'>Token API</h2><h3 id='description-4'>Description</h3>
 <p>This API is to exchange a <em>code</em> and <em>state</em> which are in the request URI that <strong>Myinfo</strong> redirects the user to after
 their authentication and consent giving, to get the Secpass token.</p>
-<h3 id='http-request-2'>HTTP Request</h3>
+<h3 id='http-request-4'>HTTP Request</h3>
 <p><code>GET https://${instance}/myinfo/token?code=${code}&amp;state=${state}</code></p>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>  curl <span class="nt">-X</span> GET <span class="nt">-H</span> <span class="s1">'Authorization: Basic ${API_key}'</span> <span class="s1">'https://${instance}/myinfo/token?code=${code}&amp;state=${state}'</span>
 </code></pre></div>
@@ -506,8 +645,8 @@ their authentication and consent giving, to get the Secpass token.</p>
 <td>This ${state} is received from <strong>Myinfo</strong> after user authenticates and gives their consent.</td>
 </tr>
 </tbody></table>
-<h3 id='http-response-2'>HTTP Response</h3>
-<p>On successful response i.e. status code 200, the response body is a <a href="#secpass-token">Secpass token</a>. The response 
+<h3 id='http-response-4'>HTTP Response</h3>
+<p>On successful response i.e. status code 200, the response body is a <a href="#secpass-token-from-singpass-myinfo-service">Secpass token from Singpass Myinfo service</a>. The response 
 <em>Content-Type</em> is <code>application/jose</code>. Follow the <a href="#howto-get-the-payload">instruction</a> to decrypt and verify Secpass token to get the JSON string for your application usage.</p>
 
 <blockquote>
@@ -542,12 +681,12 @@ their authentication and consent giving, to get the Secpass token.</p>
 <td>Internal Server Error -- We had a problem with our server. Try again later.</td>
 </tr>
 </tbody></table>
-<h1 id='myinfo-business-integration'>Myinfo Business Integration</h1><h2 id='authorisation-request-api-2'>Authorisation Request API</h2><h3 id='description-3'>Description</h3>
+<h1 id='myinfo-business-integration'>Myinfo Business Integration</h1><h2 id='authorisation-request-api-3'>Authorisation Request API</h2><h3 id='description-5'>Description</h3>
 <p>This API is to get an <em>OAuth authorisation request</em>, which can be used for request to <strong>Myinfo Business</strong> <em>/authorise</em> API.</p>
-<h3 id='http-request-3'>HTTP Request</h3>
+<h3 id='http-request-5'>HTTP Request</h3>
 <p><code>GET https://${instance}/myinfobiz/init</code></p>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>  curl <span class="nt">-X</span> GET <span class="nt">-H</span> <span class="s1">'Authorization: Basic ${API_key}'</span> <span class="s1">'https://${instance}/myinfobiz/init'</span>
-</code></pre></div><h3 id='http-response-3'>HTTP Response</h3>
+</code></pre></div><h3 id='http-response-5'>HTTP Response</h3>
 <aside class="success">
 This endpoint returns no response body. A successful call is indicated by the event that application receives a 302 response
 with redirect URI in the Location Header.
@@ -572,10 +711,10 @@ with redirect URI in the Location Header.
 <td>Internal Server Error -- We had a problem with our server. Try again later.</td>
 </tr>
 </tbody></table>
-<h2 id='token-api-2'>Token API</h2><h3 id='description-4'>Description</h3>
+<h2 id='token-api-2'>Token API</h2><h3 id='description-6'>Description</h3>
 <p>This API is to exchange a <em>code</em> and <em>state</em> which are in the request URI that <strong>Myinfo business</strong> redirects the user to after
 their authentication and consent giving, to get the Secpass token.</p>
-<h3 id='http-request-4'>HTTP Request</h3>
+<h3 id='http-request-6'>HTTP Request</h3>
 <p><code>GET https://${instance}/myinfobiz/token?code=${code}&amp;state=${state}</code></p>
 <div class="highlight"><pre class="highlight shell tab-shell"><code>  curl <span class="nt">-X</span> GET <span class="nt">-H</span> <span class="s1">'Authorization: Basic ${API_key}'</span> <span class="s1">'https://${instance}/myinfobiz/token?code=${code}&amp;state=${state}'</span>
 </code></pre></div>
@@ -594,8 +733,8 @@ their authentication and consent giving, to get the Secpass token.</p>
 <td>This ${state} is received from <strong>Myinfo business</strong> after user authenticates and gives their consent.</td>
 </tr>
 </tbody></table>
-<h3 id='http-response-4'>HTTP Response</h3>
-<p>On successful response i.e. status code 200, the response body is a <a href="#secpass-token">Secpass token</a>. The response 
+<h3 id='http-response-6'>HTTP Response</h3>
+<p>On successful response i.e. status code 200, the response body is a <a href="#secpass-token-from-singpass-myinfo-service">Secpass token from Singpass Myinfo service</a>. The response 
 <em>Content-Type</em> is <code>application/jose</code>. Follow the <a href="#howto-get-the-payload">instruction</a> to 
 decrypt and verify Secpass token to get the JSON string for your application usage.</p>
 
