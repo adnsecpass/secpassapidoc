@@ -18,9 +18,8 @@ meta:
 This APIs document details HTTP request and response for all Secpass APIs.
 
 ## Endpoints
-Secpass API endpoints are in the form of `https://${instance}/${provider}/${endpoint}`. Value of `$instance` will be provisioned
-during application onboarding with Secpass, together with application API key (see the [API Authentication](#api-authentication)
-section).
+Secpass API endpoints are in the form of `https://${instance}/${provider}/${endpoint}`. Value of `$instance` will be provisioned during application onboarding with Secpass, together with application API key (see the [API Authentication](#api-authentication) section). If a sandbox instance is provided, there will be no API key required.
+
 ## API Authentication
 Secpass API call requires application authentication by API key which will be provisioned during application onboarding. The API 
 key is
@@ -29,7 +28,32 @@ placed in **Authorization** header:
 `Authorization: Basic ${API_key}`
 
 ## Secpass token consumption
-### Secpass token
+### Secpass token from Singpass Login service
+```shell
+  # Sample Secpass token
+  eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1PWE5ODY1ODM3LTdiZDctNDZhYy1iZWY0LTQyYTc2YTk0NjQyNCJ9.E5_qq6PBTIETXA3mPyVpbwoNC-SSrmHoravbG-iSIV4fcmN_dVVbTlvShQVTIWoeACOrtppAvqVqpJBkEnCeXGa3UnomHlpS8xvd3tWl-NT12BYMYgYkNkOT91Auzvmbd4e9rCCW8mYlj8S4YML25S_dJJTQ3NSATRHYH41vXTj-6G8Ko3V4yt5DGRcRa6qARTj1lNZLRXuDNbI9sxQY-zipnSdpSHhsh97wNuFUTIeDu1EjF1_Th9sB676PQgzKxBtpF_hKvT6LzrNZMhyV5Pg7H_BcIMz8VnAxtKgOfv-O0NeqTIMSrinA7NB6YkGVXZw92EnV4jEmy-JUwqnUoA
+```
+Secpass token is a token that is in the form of compact serialized JWS.
+
+  - <a href='https://www.rfc-editor.org/rfc/rfc7515'>JWS specification</a>
+
+After receiving Secpass token, the application needs to verify the resulting token signature (using Secpass's public certificate). User's information from the payload of that JWS token contains only the UUID value of its Singpass credential.
+
+<aside class="warning">
+  On the event of invalid token signature, due to security reason, the application is advised to discard
+  the token.
+</aside>
+
+
+> Sample payload of JWS:
+
+```json
+{
+  "sub": "u=a9865837-7bd7-46ac-bef4-42a76a946424"
+}
+```
+
+### Secpass token from Singpass Myinfo service
 
 ```shell
   # Sample Secpass token
@@ -106,6 +130,79 @@ JSON data structure and leaves it fully intact as received from **Myinfo**/**Myi
 | JWS signature verification key        | Secpass public key which was provided to application by Secpass during application onboarding       |
 
 
+# Singpass Login Integration
+## Authorisation Request API
+### Description
+This API returns a Singpass login URL. The user-agent/browser should redirect user to this URL when user trigger login with Singpass.
+### HTTP Request
+`POST https://${instance}/oidc/singpass/authReqUri`
+
+```shell
+curl --location 'https://${instance}:4201/oidc/singpass/authReqUri' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic ${API_key}' \
+--data '{ "purpose": "login" }'
+```
+
+| Request body | Description                                                                                      |
+|-----------------|--------------------------------------------------------------------------------------------------|
+| *purpose*          | Can take the value *login* |
+
+### HTTP Response
+<aside class="success">
+This endpoint returns a Singpass login URL in the response body. The user-agent/browser should redirect user to this URL when user trigger login with Singpass.
+</aside>
+
+> Sample successful response
+
+```json
+{
+    "authReqUri": "http://adnsg-public.southeastasia.cloudapp.azure.com:5157/singpass/authorize?purpose=login&scope=openid&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A4200&state=tMrpao0g_V2paGvT4fEC57oGC9xFW7FpuQOTuStY2Qg&nonce=DH2HjZJIbsBpmuppBj_vIWzLMWmpaA0b-kKP9AO--68&client_id=f3fdfa0cae866ba3b81777c5bfc44206"
+}
+```
+
+| HTTP Response Status | Meaning                                                    |
+|-----|-----------------------------------------------------------------------------|
+| 200 | Redirect -- Proceed to redirect your user to the URI in the response body.  |
+| 403 | Forbidden -- Invalid API key.                                               |
+| 500 | Internal Server Error -- We had a problem with our server. Try again later. |
+
+## User Info API
+### Description
+This API is to exchange a *code* and *state* which are in the request URI that **Singpass** redirects the user to the application's callback URL after their successful authentication, to get the Secpass token.
+### HTTP Request
+`POST https://${instance}/oidc/singpass/userInfo`
+
+```shell
+curl --location 'https://${instance}:4201/oidc/singpass/userInfo' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic ${API_key}' \
+--data '{ "authCode": "XXXXX", "state": "XXXXX" }
+```
+| Request body | Description                                                                                      |
+|-----------------|--------------------------------------------------------------------------------------------------|
+| *authCode*       | a code received as request's query string at the application's callback URL after successful authentication at Singpass Login portal |
+| *state*          | a state value received as request's query string at the application's callback URL after successful authentication at Singpass Login portal" |
+
+### HTTP Response
+On successful response i.e. status code 200, the response body is a [Secpass token from Singpass Login service](#secpass-token-from-singpass-login-service). The response *Content-Type* is `application/jose`.
+
+> Sample successful response
+
+```json
+{
+    "token": "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1PWE5ODY1ODM3LTdiZDctNDZhYy1iZWY0LTQyYTc2YTk0NjQyNCJ9.E5_qq6PBTIETXA3mPyVpbwoNC-SSrmHoravbG-iSIV4fcmN_dVVbTlvShQVTIWoeACOrtppAvqVqpJBkEnCeXGa3UnomHlpS8xvd3tWl-NT12BYMYgYkNkOT91Auzvmbd4e9rCCW8mYlj8S4YML25S_dJJTQ3NSATRHYH41vXTj-6G8Ko3V4yt5DGRcRa6qARTj1lNZLRXuDNbI9sxQY-zipnSdpSHhsh97wNuFUTIeDu1EjF1_Th9sB676PQgzKxBtpF_hKvT6LzrNZMhyV5Pg7H_BcIMz8VnAxtKgOfv-O0NeqTIMSrinA7NB6YkGVXZw92EnV4jEmy-JUwqnUoA"
+}
+```
+
+| HTTP Response Status | Meaning                                                     |
+|-----|------------------------------------------------------------------------------|
+| 200 | Successfull -- Return encrypted JWS Secpass token.                           |
+| 400 | Bad request -- Invalid *state* value.                                        |
+| 403 | Forbidden -- Invalid API key.                                                |
+| 500 | Internal Server Error -- We had a problem with our server. Try again later.  |
+
+
 # Myinfo Integration
 ## Authorisation Request API
 ### Description
@@ -145,7 +242,7 @@ their authentication and consent giving, to get the Secpass token.
 | *state*         | This ${state} is received from **Myinfo** after user authenticates and gives their consent. |
 
 ### HTTP Response
-On successful response i.e. status code 200, the response body is a [Secpass token](#secpass-token). The response 
+On successful response i.e. status code 200, the response body is a [Secpass token from Singpass Myinfo service](#secpass-token-from-singpass-myinfo-service). The response 
 *Content-Type* is `application/jose`. Follow the [instruction](#howto-get-the-payload) to decrypt and verify Secpass token to get the JSON string for your application usage.
 
 > Sample successful response
@@ -201,7 +298,7 @@ their authentication and consent giving, to get the Secpass token.
 | *state*         | This ${state} is received from **Myinfo business** after user authenticates and gives their consent. |
 
 ### HTTP Response
-On successful response i.e. status code 200, the response body is a [Secpass token](#secpass-token). The response 
+On successful response i.e. status code 200, the response body is a [Secpass token from Singpass Myinfo service](#secpass-token-from-singpass-myinfo-service). The response 
 *Content-Type* is `application/jose`. Follow the [instruction](#howto-get-the-payload) to 
 decrypt and verify Secpass token to get the JSON string for your application usage.
 
